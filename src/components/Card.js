@@ -27,13 +27,13 @@ export default function Card({theme, data, type, navigation}) {
               </View> 
             </View>
             <Chart 
-              data={data.chartData} 
+              data={data.chartData.price} 
               theme={theme.cardChart} 
               direction={data.direction} 
               size={{ height: 40, width: 158 }}
             />
             <View style={styles.priceContainer}>
-              <Text type={"big"} size={18} theme={data.direction === 'up' ? theme.percent.up : theme.percent.down}>{`${parseFloat(data.change).toFixed(2)}%`}</Text>
+              <Text type={"big"} size={18} theme={data.direction === 'up' ? theme.percent.up : theme.percent.down}>{`${data.percent_change_24h}%`}</Text>
               <Text theme={theme.title} type={"regular"} size={12} style={{marginTop:5}}>{data.price}</Text>
             </View>
           </>

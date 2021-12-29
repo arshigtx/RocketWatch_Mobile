@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, StyleSheet, ScrollView, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
 
 import Card from './Card';
 

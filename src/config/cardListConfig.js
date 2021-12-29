@@ -10,13 +10,13 @@ const cardListConfig = [
   {
     title: "Top Winners",
     type: 'price', 
-    sortBy: 'change',
+    sortBy: 'percent_change_24h',
     dir: 'asc'
   }, 
   {
     title: "Top Losers",
     type: 'price',
-    sortBy: 'change',
+    sortBy: 'percent_change_24h',
     dir: 'desc'
   }];
 

@@ -3,10 +3,6 @@ import {StyleSheet, ScrollView, Image, RefreshControl, Text, TouchableOpacity } 
 
 import cardListConfig from '../config/cardListConfig';
 
-import { formatUnix } from '../utils/unixTime';
-import { formatChartData } from '../utils/formatChartData';
-import { replaceSlug } from '../utils/multiApiNameMatch';
-
 import ScreenContainer from '../components/ScreenContainer';
 import Search from '../components/Search';
 import CardSection from '../components/CardSection';
@@ -14,7 +10,12 @@ import CardSection from '../components/CardSection';
 import { ThemeContext } from '../context/themeContext';
 
 import news from '../data/newsData';
-import data from '../data/data.json';
+
+import { 
+  getTrendingCryptos, 
+  getCryptoMetadata, 
+  getChartData 
+} from '../api/cryptoDataApi';
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -22,77 +23,28 @@ const wait = (timeout) => {
 
 export default function Home({ navigation }) {
 
-  const [ isLoading, setIsLoading ] = useState(true);
-  const [ cryptoData, setCryptoData ] = useState([]);
+  const [ data, setData ] = useState([])
+  const [ loading, setLoading ] = useState(true);
+  const [ error, setError ] = useState(false);
   const [ refreshing, setRefreshing ] = useState(false);
-  const [ count, setCount ] = useState(0);
+  const [ count, setCount ] = useState([4,2,20,30]);
 
   const { theme } = useContext(ThemeContext);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    getInitialData();
+    getCryptoData();
     wait(5000).then(() => setRefreshing(false));
   },[]);
 
-  const getTrendingCryptos = async (limit) => {
-    try {
-      let response = await fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=${limit}`, {
-          method: 'GET',
-          headers: {
-            'X-CMC_PRO_API_KEY': '5f066acc-d545-430c-8bcf-31f90554e677'
-          }
-        }
-      );
-      let json = await response.json();
-      const data = await json.data.map((item) => ({
-        id: item.id,
-        name: item.name,
-        symbol: item.symbol,
-        slug: item.slug,
-        price: `$${item.quote.USD.price.toFixed(2)}`,
-        change: `${item.quote.USD.percent_change_24h}%`,
-        volume: item.quote.USD.volume_24h,
-        direction: item.quote.USD.percent_change_24h >= 0 ? 'up' : 'down',
-      }));
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const getCryptoMetaData = async (slugs) => {
-    const allMetadata = [...data];
-    const cryptoMetadata = []
-    slugs.forEach((slug) => cryptoMetadata.push(       
-        allMetadata
-        .filter((data) => data.slug === slug)
-        .map((data) => ({
-          logo: data.logo,
-          description: data.description,
-          urls: data.urls
-        }))[0]
-      )
-    );
-    return cryptoMetadata;
-  }
-
-  const getAllChartData = async (slugs) => {
-    let timeNow = formatUnix(new Date().getTime());
-    let last24Hrs = timeNow - (48 *3600);
-    const allChartData = [];
-    for await (let slug of slugs) {
-      let newSlug = replaceSlug(slug);
-      try {
-        let response = await fetch(`https://api.coingecko.com/api/v3/coins/${newSlug}/market_chart/range?vs_currency=usd&from=${last24Hrs}&to=${timeNow}`);
-        let json = await response.json();
-        let formatJson = await formatChartData(json.prices);
-        allChartData.push({chartData: formatJson});  
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    return allChartData;
+  const getCryptoData = async () => {
+    const trendingCryptos = await getTrendingCryptos(1);
+    const cryptoSlugs = await trendingCryptos.map((data) => data.slug);
+    const cryptoMetadata = await getCryptoMetadata(cryptoSlugs);
+    const allChartData =  await getChartData(cryptoSlugs, '2d');
+    const mergedData = await mergeArrs(trendingCryptos, cryptoMetadata, allChartData);
+    setData(mergedData);
+    setLoading(false);
   }
 
   const mergeArrs = async (arr1, arr2, arr3) => {
@@ -104,25 +56,15 @@ export default function Home({ navigation }) {
     return mergedArr
   }
 
-  const getInitialData = async () => {
-    const trendingCryptos = await getTrendingCryptos(10);
-    const cryptoSlugs = await trendingCryptos.map((data) => data.slug);
-    const cryptoMetadata = await getCryptoMetaData(cryptoSlugs)
-    const allChartData =  await getAllChartData(cryptoSlugs);
-    const mergedData = await mergeArrs(trendingCryptos, cryptoMetadata, allChartData);
-    console.log([...mergedData])
-    setCryptoData([...mergedData]);
-    setIsLoading(false);
-  }
   useEffect(() => {
-    if (cryptoData.length === 0) {
-      getInitialData();
+    if (data.length === 0) {
+      getCryptoData()
     }
   },[])
 
   useEffect(() => {
     console.log('data has changed');
-  },[cryptoData])
+  },[data])
 
   return (
     <ScreenContainer theme={theme}>
@@ -130,11 +72,13 @@ export default function Home({ navigation }) {
         theme={theme} 
       />
       <TouchableOpacity onPress={() => {
-        getInitialData();
-        setCount(count+1)
+        const a = [4,22,21,33]
+        getCryptoData()
+        setCount([...a])
       }}>
        <Text style={{color: 'white', padding: 25, fontSize: 16}}>Count: {count}</Text>
       </TouchableOpacity>
+      {count.map((item) => <Text style={{color: 'white', padding: 5, fontSize: 16}}>{item}</Text>)}
       <ScrollView 
         scrollEventThrottle={50}
         showsVerticalScrollIndicator={false}
@@ -147,12 +91,12 @@ export default function Home({ navigation }) {
           />
         }
       >
-        {!isLoading ? cardListConfig.map((item, i) => (
+        {!loading ? cardListConfig.map((item, i) => (
           <CardSection
             key={`${item.type}-${i}`} 
             config={item}
             theme={theme} 
-            data={item.type === 'price' ? cryptoData : news}
+            data={item.type === 'price' ? data : news}
             navigation={navigation} 
           />
         )) : null}
@@ -170,3 +114,5 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   }
 })
+
+

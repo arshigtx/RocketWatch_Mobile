@@ -10,7 +10,7 @@ import SearchResults from '../components/SearchResults';
 
 import { ThemeContext } from '../context/themeContext';
 
-import search from '../api/search';
+import { searchCrypto } from '../api/cryptoDataApi';
 
 export default function Search() {
   
@@ -29,8 +29,10 @@ export default function Search() {
 
   const showResults = async (query) => {
     if (query.length > 0) {
-    setSearchActive(true);
-    setResults(search(query));
+      const searchResults = await searchCrypto(query);
+      console.log(searchResults);
+      setSearchActive(true);
+      setResults(searchResults);
     } else {
       setResults(null);
     }

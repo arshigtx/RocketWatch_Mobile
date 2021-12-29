@@ -35,14 +35,8 @@ export default function CoinDetails({ route, navigation }) {
         <Text type={"big"} size={16} theme={direction === 'up' ? theme.percent.up : theme.percent.down} style={{marginTop: 10}}>{`${parseFloat(change).toFixed(2)}%`}</Text>
         <Text type={"big"} size={16} theme={theme.title} style={{marginTop: 2}}>{currentPrice ? currentPrice : price}</Text>
       </View>
-      {/* <Chart 
-        data={chartData} 
-        theme={theme.coinChart} 
-        direction={direction} 
-        size={{height: 300, width: width}}
-      /> */}
       <Chart2 
-        data={chartData}
+        data={chartData.price}
         theme={theme.coinChart} 
         direction={direction}
         setCurrentPrice={setCurrentPrice} 
