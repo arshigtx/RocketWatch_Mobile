@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList, Text} from 'react-native';
 
 import Card from './Card';
 
 import { sortList } from '../utils/sortLists';
+import LoadingCard from './LoadingCard';
 
 export default function CardList({theme, data, config, navigation}) {
 
@@ -31,12 +32,13 @@ export default function CardList({theme, data, config, navigation}) {
   return (
     <View style={styles.cardContainer}>
       <FlatList 
-        data={sortedData && sortedData}
+        data={sortedData}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         horizontal={true}
         initialNumToRender={5}
         showsHorizontalScrollIndicator={false}
+        ListEmptyComponent={<LoadingCard />}
       />
     </View>
   )

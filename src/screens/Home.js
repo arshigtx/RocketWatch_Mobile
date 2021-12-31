@@ -1,7 +1,5 @@
 import React, {useEffect, useState, useCallback, useContext} from 'react';
-import {StyleSheet, ScrollView, Image, RefreshControl, Text, TouchableOpacity } from 'react-native';
-
-import cardListConfig from '../config/cardListConfig';
+import {StyleSheet, ScrollView, RefreshControl, Text, TouchableOpacity} from 'react-native';
 
 import ScreenContainer from '../components/ScreenContainer';
 import Search from '../components/Search';
@@ -9,12 +7,13 @@ import CardSection from '../components/CardSection';
 
 import { ThemeContext } from '../context/themeContext';
 
-import news from '../data/newsData';
+import cardListConfig from '../config/cardListConfig';
 
 import { 
   getTrendingCryptos, 
   getCryptoMetadata, 
-  getChartData 
+  getChartData ,
+  getCryptoNews
 } from '../api/cryptoDataApi';
 
 const wait = (timeout) => {
@@ -24,6 +23,7 @@ const wait = (timeout) => {
 export default function Home({ navigation }) {
 
   const [ data, setData ] = useState([])
+  const [ newsData, setNewsData ] = useState([]);
   const [ loading, setLoading ] = useState(true);
   const [ error, setError ] = useState(false);
   const [ refreshing, setRefreshing ] = useState(false);
@@ -36,14 +36,16 @@ export default function Home({ navigation }) {
     getCryptoData();
     wait(5000).then(() => setRefreshing(false));
   },[]);
-
+  
   const getCryptoData = async () => {
-    const trendingCryptos = await getTrendingCryptos(1);
+    const trendingCryptos = await getTrendingCryptos(10);
     const cryptoSlugs = await trendingCryptos.map((data) => data.slug);
     const cryptoMetadata = await getCryptoMetadata(cryptoSlugs);
     const allChartData =  await getChartData(cryptoSlugs, '2d');
     const mergedData = await mergeArrs(trendingCryptos, cryptoMetadata, allChartData);
-    setData(mergedData);
+    const newsData = await getCryptoNews();
+    setNewsData(newsData);
+    setData(...mergedData);
     setLoading(false);
   }
 
@@ -58,7 +60,8 @@ export default function Home({ navigation }) {
 
   useEffect(() => {
     if (data.length === 0) {
-      getCryptoData()
+      // getCryptoData()
+      // .finally(() => setLoading(false))
     }
   },[])
 
@@ -71,14 +74,14 @@ export default function Home({ navigation }) {
       <Search 
         theme={theme} 
       />
-      <TouchableOpacity onPress={() => {
-        const a = [4,22,21,33]
-        getCryptoData()
-        setCount([...a])
+      {/* <TouchableOpacity onPress={() => {
+        // let a = [...count]
+        // setCount(a.push(a[a.length -1]*2))
+        setCount([4,23,20,30])
       }}>
-       <Text style={{color: 'white', padding: 25, fontSize: 16}}>Count: {count}</Text>
+       <Text style={{color: 'white', padding: 25, fontSize: 16}}>Press</Text>
       </TouchableOpacity>
-      {count.map((item) => <Text style={{color: 'white', padding: 5, fontSize: 16}}>{item}</Text>)}
+      {count.map((item) => <Text style={{color: 'white'}}>{item}</Text>)} */}
       <ScrollView 
         scrollEventThrottle={50}
         showsVerticalScrollIndicator={false}
@@ -91,15 +94,16 @@ export default function Home({ navigation }) {
           />
         }
       >
-        {!loading ? cardListConfig.map((item, i) => (
+        {cardListConfig.map((item, i) => (
           <CardSection
             key={`${item.type}-${i}`} 
             config={item}
             theme={theme} 
-            data={item.type === 'price' ? data : news}
-            navigation={navigation} 
+            data={item.type === 'price' ? data : newsData}
+            navigation={navigation}
+            loading={loading} 
           />
-        )) : null}
+        ))}
       </ScrollView>
     </ScreenContainer>
   )

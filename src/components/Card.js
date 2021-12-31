@@ -2,17 +2,20 @@ import React, {useEffect} from 'react';
 import {View, StyleSheet, Image, Animated} from 'react-native';
 
 import Pressable from '../components/Pressable';
-
 import Chart from '../components/Chart';
-import {Text} from './Text';
+import { Text } from './Text';
+
+import { formatPrice, formatPercent } from '../utils/formatNumber';
+import { shortenLongText } from '../utils/formatText';
 
 export default function Card({theme, data, type, navigation}) {
 
   const cardStyleByType = {
-    width: type === "price" ? 160 : 203,
-    height: type === "price" ? 172 : 172,
+    width: type === "price" ? 160 : 190,
+    height: type === "price" ? 172 : 145,
     padding: type === "news" && 20
   }
+
 
   return (
     <Pressable onPress={() => navigation.navigate('CoinDetails', {data})}>
@@ -33,16 +36,16 @@ export default function Card({theme, data, type, navigation}) {
               size={{ height: 40, width: 158 }}
             />
             <View style={styles.priceContainer}>
-              <Text type={"big"} size={18} theme={data.direction === 'up' ? theme.percent.up : theme.percent.down}>{`${data.percent_change_24h}%`}</Text>
-              <Text theme={theme.title} type={"regular"} size={12} style={{marginTop:5}}>{data.price}</Text>
+              <Text type={"big"} size={18} theme={data.direction === 'up' ? theme.percent.up : theme.percent.down}>{formatPercent(data.percent_change_24h)}</Text>
+              <Text theme={theme.title} type={"regular"} size={12} style={{marginTop:5}}>{formatPrice(data.price)}</Text>
             </View>
           </>
         : 
           <>
-            <Text type={'big'} theme={theme.title} size={15}>{data.headline}</Text>
+            <Text type={'big'} theme={theme.title} size={13}>{shortenLongText(data.title, 50)}</Text>
             <View>
-              <Text type={'regular'} theme={theme.title} size={12} style={{marginBottom: 5}}>{data.agency}</Text>
-              <Text type={'regular'} theme={theme.title} size={12}>{data.date}</Text>
+              <Text type={'regular'} theme={theme.title} size={12} style={{marginBottom: 5}}>{data.source_id}</Text>
+              <Text type={'regular'} theme={theme.title} size={12}>{data.pubDate}</Text>
             </View>
           </>
         }

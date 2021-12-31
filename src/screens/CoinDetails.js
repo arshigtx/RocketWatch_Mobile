@@ -12,11 +12,13 @@ import { width } from '../constants/size';
 
 import { ThemeContext } from '../context/themeContext';
 
+import { formatPrice, formatPercent } from '../utils/formatNumber';
+
 
 export default function CoinDetails({ route, navigation }) {
   
   const { theme } = useContext(ThemeContext);
-  const { name, change, price, chartData, direction } = route.params.data
+  const { name, percent_change_24h, price, chartData, direction } = route.params.data
 
   const [ currentPrice, setCurrentPrice ] = useState(null);
 
@@ -32,8 +34,8 @@ export default function CoinDetails({ route, navigation }) {
       </View>
       <View style={styles.priceContainer}>
         <Text type={"big"} size={22} theme={theme.title}>{name}</Text>
-        <Text type={"big"} size={16} theme={direction === 'up' ? theme.percent.up : theme.percent.down} style={{marginTop: 10}}>{`${parseFloat(change).toFixed(2)}%`}</Text>
-        <Text type={"big"} size={16} theme={theme.title} style={{marginTop: 2}}>{currentPrice ? currentPrice : price}</Text>
+        <Text type={"big"} size={16} theme={direction === 'up' ? theme.percent.up : theme.percent.down} style={{marginTop: 10}}>{formatPercent(percent_change_24h)}</Text>
+        <Text type={"big"} size={16} theme={theme.title} style={{marginTop: 2}}>{formatPrice(currentPrice ? currentPrice : price)}</Text>
       </View>
       <Chart2 
         data={chartData.price}

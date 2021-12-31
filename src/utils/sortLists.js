@@ -1,6 +1,4 @@
 
-import {percentStringToNum} from '../utils/numberFormatting';
-
 export function sortList(data, config) {
   const { sortBy, dir } = config;
   const sortedList = (dir === 'asc') 

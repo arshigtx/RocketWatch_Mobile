@@ -67,7 +67,8 @@ export async function searchCrypto(query) {
         price,
         percent_change_24h,
         volume_24h,
-        logo
+        logo,
+        direction
       }
     }`
   })

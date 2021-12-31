@@ -1,19 +1,25 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
-import {Text} from './Text';
+import { Text } from './Text';
 import CardList from './CardList';
+import LoadingCard from '../components/LoadingCard';
 
-export default function CardSection({ theme, data, config, navigation }) {
+export default function CardSection({ theme, data, config, loading, navigation }) {
+
   return (
     <View style={styles.sectionContainer}>
       <Text style={{paddingLeft: 20}} type={'big'} size={24} theme={theme.title}>{config.title}</Text>
-      <CardList 
-        data={data} 
-        theme={theme}
-        config={config}
-        navigation={navigation}
-      />
+      {/* {!loading ? */}
+        <CardList 
+          data={data} 
+          theme={theme}
+          config={config}
+          navigation={navigation}
+        />
+      {/* :
+        <LoadingCard />
+      } */}
     </View>
   )
 }
