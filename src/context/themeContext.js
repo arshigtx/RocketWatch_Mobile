@@ -8,7 +8,7 @@ export const themes = {
 
 export const ThemeContext = createContext(themes.dark);
 
-export const ThemeProvider = (props) => {
+export const ThemeProvider = ({children}) => {
 
   const [state, dispatch] = useReducer(themeReducer, themes.dark);
 
@@ -26,7 +26,7 @@ export const ThemeProvider = (props) => {
     });
   }
 
-  return <ThemeContext.Provider value={{ theme: state, changeToDarkTheme, changeToLightTheme}}>{props.children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme: state, changeToDarkTheme, changeToLightTheme}}>{children}</ThemeContext.Provider>;
 }
 
 //reducer

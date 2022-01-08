@@ -1,4 +1,4 @@
-import React, { useState, useContext} from 'react';
+import React, { useState, useContext, useEffect} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 
 import ScreenContainer from '../components/ScreenContainer';
@@ -14,13 +14,25 @@ import { ThemeContext } from '../context/themeContext';
 
 import { formatPrice, formatPercent } from '../utils/formatNumber';
 
+import { getChartData } from '../api/cryptoDataApi';
+
 
 export default function CoinDetails({ route, navigation }) {
   
   const { theme } = useContext(ThemeContext);
-  const { name, percent_change_24h, price, chartData, direction } = route.params.data
+  const { name, slug, percent_change_24h, price, chartData, direction } = route.params.data
 
   const [ currentPrice, setCurrentPrice ] = useState(null);
+  const [ chart, setChart ] = useState(null);
+
+  useEffect(() => {
+    if(!chartData) {
+      console.log(slug)
+      getChartData([slug], '2d')
+        .then(result => setChart(result[0].chartData))
+        .catch(err => console.log(err))
+    }
+  },[])
 
   return (
     <ScreenContainer theme={theme}>
@@ -33,17 +45,18 @@ export default function CoinDetails({ route, navigation }) {
         </Pressable>
       </View>
       <View style={styles.priceContainer}>
-        <Text type={"big"} size={22} theme={theme.title}>{name}</Text>
+        <Text type={"big"} size={22} theme={theme.text}>{name}</Text>
         <Text type={"big"} size={16} theme={direction === 'up' ? theme.percent.up : theme.percent.down} style={{marginTop: 10}}>{formatPercent(percent_change_24h)}</Text>
-        <Text type={"big"} size={16} theme={theme.title} style={{marginTop: 2}}>{formatPrice(currentPrice ? currentPrice : price)}</Text>
+        <Text type={"big"} size={16} theme={theme.text} style={{marginTop: 2}}>{formatPrice(currentPrice ? currentPrice : price)}</Text>
       </View>
-      <Chart2 
-        data={chartData.price}
-        theme={theme.coinChart} 
-        direction={direction}
-        setCurrentPrice={setCurrentPrice} 
-      />
-
+      {chartData || chart ? 
+        <Chart2 
+          data={chartData ? chartData.price : chart.price}
+          theme={theme.coinChart} 
+          direction={direction}
+          setCurrentPrice={setCurrentPrice} 
+        />
+      : null}
     </ScreenContainer>
   )
 }

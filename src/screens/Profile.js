@@ -12,15 +12,15 @@ export default function Explore() {
 
   return (
       <ScreenContainer theme={theme} style={styles.container}>
-        <Text type={'big'} size={24} theme={theme.title}>Appearance</Text>
+        <Text type={'big'} size={24} theme={theme.text}>Appearance</Text>
         <TouchableOpacity onPress={() => changeToLightTheme()}>
           <View style={styles.optionContainer}>
-            <Text type={'regular'} size={18} style={{paddingTop: 20}} theme={theme.title}>Light Mode</Text>
+            <Text type={'regular'} size={18} style={{paddingTop: 20}} theme={theme.text}>Light Mode</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => changeToDarkTheme()}>
           <View style={styles.optionContainer}>
-            <Text type={'regular'} size={18}  style={{paddingTop: 20}} theme={theme.title}>Dark Mode</Text>
+            <Text type={'regular'} size={18}  style={{paddingTop: 20}} theme={theme.text}>Dark Mode</Text>
           </View>
         </TouchableOpacity>
       </ScreenContainer>

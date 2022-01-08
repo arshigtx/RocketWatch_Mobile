@@ -1,40 +1,45 @@
-import React, {useEffect, useState, useCallback, useContext} from 'react';
-import {StyleSheet, ScrollView, RefreshControl, Text, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
+import { StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 
 import ScreenContainer from '../components/ScreenContainer';
 import Search from '../components/Search';
+import SearchResults from '../components/SearchResults'
 import CardSection from '../components/CardSection';
 
 import { ThemeContext } from '../context/themeContext';
+import { CryptoListingDataContext } from '../context/cryptoListingDataContext';
 
 import cardListConfig from '../config/cardListConfig';
 
 import { 
   getTrendingCryptos, 
   getCryptoMetadata, 
-  getChartData ,
-  getCryptoNews
+  getCryptoNews, 
+  getChartData 
 } from '../api/cryptoDataApi';
-
-const wait = (timeout) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-}
 
 export default function Home({ navigation }) {
 
-  const [ data, setData ] = useState([])
+  const { theme } = useContext(ThemeContext);
+  const { data, updateData } = useContext(CryptoListingDataContext);
+
+
+  // const [ data, setData ] = useState([])
   const [ newsData, setNewsData ] = useState([]);
-  const [ loading, setLoading ] = useState(true);
   const [ error, setError ] = useState(false);
   const [ refreshing, setRefreshing ] = useState(false);
-  const [ count, setCount ] = useState([4,2,20,30]);
-
-  const { theme } = useContext(ThemeContext);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    getCryptoData();
-    wait(5000).then(() => setRefreshing(false));
+    getCryptoData()
+    .catch(err => {
+      console.log(err)
+      setError(true);
+    })
+    .finally(() => {
+      setRefreshing(false)
+      error ? setError(false) : null;
+    })
   },[]);
   
   const getCryptoData = async () => {
@@ -45,23 +50,26 @@ export default function Home({ navigation }) {
     const mergedData = await mergeArrs(trendingCryptos, cryptoMetadata, allChartData);
     const newsData = await getCryptoNews();
     setNewsData(newsData);
-    setData(...mergedData);
-    setLoading(false);
+    updateData(mergedData);
+    // setData(mergedData);
   }
 
   const mergeArrs = async (arr1, arr2, arr3) => {
     const mergedArr = await arr1.map((item, i) => ({
       ...item,
       ...arr2[i],
-      ...arr3[i],
+      ...arr3[i]
     }))
     return mergedArr
   }
 
   useEffect(() => {
     if (data.length === 0) {
-      // getCryptoData()
-      // .finally(() => setLoading(false))
+      getCryptoData()
+      .catch((err) => {
+        console.log(err);
+        setError(true);
+      })
     }
   },[])
 
@@ -70,18 +78,15 @@ export default function Home({ navigation }) {
   },[data])
 
   return (
-    <ScreenContainer theme={theme}>
+    <ScreenContainer 
+      theme={theme}>
       <Search 
-        theme={theme} 
-      />
-      {/* <TouchableOpacity onPress={() => {
-        // let a = [...count]
-        // setCount(a.push(a[a.length -1]*2))
-        setCount([4,23,20,30])
-      }}>
-       <Text style={{color: 'white', padding: 25, fontSize: 16}}>Press</Text>
-      </TouchableOpacity>
-      {count.map((item) => <Text style={{color: 'white'}}>{item}</Text>)} */}
+        theme={theme}
+        navigation={navigation} 
+      >
+       <SearchResults 
+       />
+      </Search>
       <ScrollView 
         scrollEventThrottle={50}
         showsVerticalScrollIndicator={false}
@@ -94,16 +99,18 @@ export default function Home({ navigation }) {
           />
         }
       >
-        {cardListConfig.map((item, i) => (
+        {!error ? cardListConfig.map((item, i) => (
           <CardSection
             key={`${item.type}-${i}`} 
             config={item}
             theme={theme} 
-            data={item.type === 'price' ? data : newsData}
+            // data={item.type === 'price' ? data : newsData}
             navigation={navigation}
-            loading={loading} 
           />
-        ))}
+        ))
+        :
+          <Text>Please check your connection and try again.</Text>
+      }
       </ScrollView>
     </ScreenContainer>
   )

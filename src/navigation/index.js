@@ -8,6 +8,7 @@ import Home from '../screens/Home';
 import Explore from '../screens/Explore';
 import Watchlist from '../screens/Watchlist';
 import Profile from '../screens/Profile';
+import Search from '../components/Search';
 import CoinDetails from '../screens/CoinDetails';
 import { HomeIcon, ExploreIcon, WatchlistIcon, ProfileIcon } from '../components/Icons'
 
@@ -49,7 +50,6 @@ function TabMenuNav() {
           paddingTop: 7,
           paddingBottom: 35
         },
-        // tabBarShowLabel: false 
       }}
     >
       <TabMenu.Screen
@@ -63,7 +63,7 @@ function TabMenuNav() {
       />
       <TabMenu.Screen
         name="Explore"
-        component={Explore}
+        component={ExploreNav}
         options={{
           tabBarIcon: ({ color, size }) => (
             <ExploreIcon color={color} size={size} />
@@ -79,8 +79,6 @@ function TabMenuNav() {
             <WatchlistIcon color={color} size={size} />
           ),
         }}        
-        //   title: 'Tab Two',
-        // }}
       />
       <TabMenu.Screen
         name="Profile"
@@ -90,9 +88,6 @@ function TabMenuNav() {
             <ProfileIcon color={color} size={size} />
           ),
         }} 
-               
-        //   title: 'Tab Two',
-        // }}
       >
         {props => <Profile {...props}/> }
       </TabMenu.Screen>
@@ -128,6 +123,10 @@ function HomeNav() {
       {props => <Home {...props} />}
       </HomeStack.Screen>
       <HomeStack.Screen
+        name="SearchNav"
+        component={SearchNav}
+      />
+      <HomeStack.Screen
         name="CoinDetails"
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -151,3 +150,47 @@ function HomeNav() {
     </HomeStack.Navigator>
   )
 } 
+
+const ExploreStack = createNativeStackNavigator();
+
+function ExploreNav() {
+  return (
+    <ExploreStack.Navigator
+      initialRouteName="ExploreScreen"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <ExploreStack.Screen
+        name="ExploreScreen"
+        component={Explore} 
+      />
+      <ExploreStack.Screen
+        name="CoinDetails"
+        component={CoinDetails}
+      />
+    </ExploreStack.Navigator>
+  )
+}
+
+const SearchStack = createNativeStackNavigator();
+
+function SearchNav() {
+  return (
+    <SearchStack.Navigator
+      initialRouteName="Search"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <SearchStack.Screen
+        name="Search"
+        component={Search} 
+      />
+      <SearchStack.Screen
+        name="CoinDetails"
+        component={CoinDetails}
+      />
+    </SearchStack.Navigator>
+  )
+}

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useContext } from 'react';
+import React, {useState, useRef, useContext, cloneElement } from 'react';
 import { StyleSheet, Animated, TouchableOpacity } from 'react-native';
 
 import {height, width} from '../constants/size';
@@ -6,13 +6,12 @@ import {height, width} from '../constants/size';
 import { SearchIcon } from '../components/Icons';
 import { Text } from '../components/Text';
 import { TextInput } from '../components/TextInput'
-import SearchResults from '../components/SearchResults';
 
 import { ThemeContext } from '../context/themeContext';
 
 import { searchCrypto } from '../api/cryptoDataApi';
 
-export default function Search() {
+export default function Search({ navigation, children }) {
   
   const [ searchActive, setSearchActive ] = useState(false);
   const [ results, setResults ] = useState(null);
@@ -22,15 +21,16 @@ export default function Search() {
   const textInputRef = useRef();
 
   const cancelSearch = () => {
-    setSearchActive(false);
+    setResults(null);
+    searchClose();
     textInputRef.current.blur();
     textInputRef.current.clear();
+    setSearchActive(false);
   }
 
   const showResults = async (query) => {
     if (query.length > 0) {
       const searchResults = await searchCrypto(query);
-      console.log(searchResults);
       setSearchActive(true);
       setResults(searchResults);
     } else {
@@ -96,13 +96,13 @@ export default function Search() {
           ref={textInputRef}
           placeholder="Search"
           onFocus={() => searchOpen()}
-          onBlur={() => searchClose()}
+          // onBlur={() => searchClose()}
           onChangeText={(query) => showResults(query)}
           autoCorrect={false}
           returnKeyType={'done'}
           placeholderTextColor={theme.search.color}
           theme={theme.search}
-          // onSubmitEditing={() => cancelSearch()}
+          onSubmitEditing={() => cancelSearch()}
         />
         <TouchableOpacity 
           style={{zIndex: -1}} 
@@ -118,14 +118,7 @@ export default function Search() {
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>
-      {searchActive ?
-        <SearchResults 
-          theme={theme} 
-          searchActive={searchActive}
-          results={results}
-        />
-        : null
-      }
+     {cloneElement(children, {results, theme, navigation, searchActive})}
     </>
   )
 }

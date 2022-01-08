@@ -20,7 +20,7 @@ const light = {
       color: '#534033'
     }
   },
-  title: {
+  text: {
     color: '#231206'
   },
   priceCard: {
@@ -82,7 +82,7 @@ const dark = {
       color: '#F9E8DC'
     }
   },
-  title: {
+  text: {
     color: '#FCE4D8'
   },
   priceCard: {

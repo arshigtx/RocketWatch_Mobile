@@ -1,29 +1,26 @@
 import React, {useContext} from 'react';
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import ScreenContainer from '../components/ScreenContainer'
 import Search from '../components/Search';
-import { Text } from '../components/Text';
+import ListSection from '../components/ListSection';
 
 import { ThemeContext } from '../context/themeContext';
 
-export default function Explore({ route }) {
+export default function Explore({ navigation }) {
 
   const { theme } = useContext(ThemeContext);
 
   return (
     <ScreenContainer theme={theme}>
-      <Search theme={theme}/>
-      {/* <Text style={{color: 'white'}}>{data}</Text> */}
+      <Search 
+        theme={theme}
+        navigation={navigation}
+      >
+        <ListSection
+          title={'Explore'}
+        />
+      </Search>
     </ScreenContainer>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

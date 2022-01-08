@@ -1,11 +1,13 @@
 import fetchAPI from './base';
 
+const DEV_URL = 'http://192.168.0.15:3000/graphql'
+
 export async function getTrendingCryptos(limit){
-  return await fetchAPI('http://172.20.10.5:3000/graphql', 'POST', 
+  return await fetchAPI(DEV_URL, 'POST', 
   {
     query:
     `{
-      trending(limit: ${limit}){
+      listing(limit: ${limit}){
         id,
         name,
         symbol,
@@ -17,12 +19,33 @@ export async function getTrendingCryptos(limit){
       }
     }`
   })
-  .then(result => result.data.trending)
+  .then(result => result.data.listing)
+  .catch(err => console.log(err));
+}
+
+export async function getOffsetCryptoData(limit, offset){
+  return await fetchAPI(DEV_URL, 'POST', 
+  {
+    query:
+    `{
+      offsetListing(limit: ${limit}, offset: ${offset}){
+        name,
+        slug,
+        symbol,
+        price,
+        percent_change_24h,
+        volume_24h,
+        logo,
+        direction
+      }
+    }`
+  })
+  .then(result => result.data.offsetListing)
   .catch(err => console.log(err));
 }
 
 export async function getCryptoMetadata(slugs){
-  return await fetchAPI('http://172.20.10.5:3000/graphql', 'POST', 
+  return await fetchAPI(DEV_URL, 'POST', 
   {
     query: 
     `{
@@ -39,7 +62,7 @@ export async function getCryptoMetadata(slugs){
 }
 
 export async function getChartData(slugs, range) {
-  return await fetchAPI('http://172.20.10.5:3000/graphql', 'POST', 
+  return await fetchAPI(DEV_URL, 'POST', 
   {
     query: 
     `{
@@ -57,12 +80,13 @@ export async function getChartData(slugs, range) {
 }
 
 export async function searchCrypto(query) {
-  return await fetchAPI('http://172.20.10.5:3000/graphql', 'POST', 
+  return await fetchAPI(DEV_URL, 'POST', 
   {
     query: 
     `{
       search(query: "${query}") {
         name,
+        slug,
         symbol,
         price,
         percent_change_24h,
@@ -77,7 +101,7 @@ export async function searchCrypto(query) {
 }
 
 export async function getCryptoNews() {
-  return await fetchAPI('http://172.20.10.5:3000/graphql', 'POST', 
+  return await fetchAPI(DEV_URL, 'POST', 
   {
     query: 
     `{

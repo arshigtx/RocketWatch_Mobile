@@ -3,11 +3,12 @@ import { StyleSheet, View, Animated, ScrollView, Image, KeyboardAvoidingView } f
 
 import { Text } from '../components/Text';
 import Pressable from '../components/Pressable';
+import ListItem from '../components/ListItem';
 
 import { formatPrice, formatPercent } from '../utils/formatNumber';
 import { shortenLongText } from '../utils/formatText';
 
-export default function SearchResults({ theme, results, searchActive }) {
+export default function SearchResults({ theme, results, searchActive, navigation }) {
 
   const searchAnim = useRef(new Animated.Value(0)).current;
 
@@ -35,34 +36,27 @@ export default function SearchResults({ theme, results, searchActive }) {
   },[searchActive])
 
   return (
+    searchActive ? 
     <Animated.View style={[styles.container, theme.background, {opacity: searchAnim}]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View>
+        <ScrollView showsVerticalScrollIndicator={false} >
           {searchActive && results ?
-            results.map(({name, symbol, logo, price, percent_change_24h, direction}, i) => (
-              <Pressable key={`${name}-${i}`}>
-                <View style={styles.searchResult}>
-                  <View style={styles.nameContainer}>
-                    <Image style={styles.image} source={{uri: logo}} />
-                    <View style={{marginLeft: 15}}>
-                      <Text type={"big"} size={18} theme={theme.title}>{symbol}</Text>
-                      <Text type={"regular"} size={14} theme={theme.title} style={{paddingTop: 1}}>{shortenLongText(name,25)}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.priceContainer}>
-                    <Text theme={theme.title}>{formatPrice(price)}</Text>
-                    <Text theme={direction === 'up' ? theme.percent.up : theme.percent.down}>{formatPercent(percent_change_24h)}</Text>
-                  </View>
-                </View>
-              </Pressable>
+            results.map((result, i) => (
+              <ListItem
+                key={`${result.name}-${i}`}
+                data={result}
+                theme={theme}
+                navigation={navigation}
+              />
             ))
             : null
           }
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Animated.View>
+    : null
   )
 }
 
