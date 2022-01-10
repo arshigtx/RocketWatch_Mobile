@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, StatusBar, StyleSheet } from 'react-native';
 
-export default function ScreenContainer({ theme, style, children}) {
+import { ThemeContext } from '../context/themeContext';
+
+export default function ScreenContainer({ style, children}) {
+
+  const { theme } = useContext(ThemeContext);
+
   return (
     <>
       <StatusBar barStyle={theme.osBar} />

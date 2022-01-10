@@ -1,14 +1,11 @@
-import React, { useState, useContext, useEffect} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import {View, StyleSheet } from 'react-native';
 
 import ScreenContainer from '../components/ScreenContainer';
 import { Text } from '../components/Text';
-import  Chart  from '../components/Chart'
 import Pressable from '../components/Pressable';
-import { BackArrowIcon, AddIcon } from '../components/Icons';
+import { Arrow, AddIcon } from '../components/Icons';
 import Chart2 from '../components/Chart2';
-
-import { width } from '../constants/size';
 
 import { ThemeContext } from '../context/themeContext';
 
@@ -35,13 +32,17 @@ export default function CoinDetails({ route, navigation }) {
   },[])
 
   return (
-    <ScreenContainer theme={theme}>
+    <ScreenContainer>
       <View style={styles.headerContainer}>
         <Pressable type={'icon'} onPress={() => navigation.goBack()} >
-          <BackArrowIcon color={theme.backIcon.color}/>
+          <Arrow 
+            color={theme.backIcon.color}
+            orientation={'right'}
+            size={17}
+          />
         </Pressable>
         <Pressable type={'icon'}>
-          <AddIcon color={theme}/>
+          <AddIcon size={32} color={theme}/>
         </Pressable>
       </View>
       <View style={styles.priceContainer}>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Dimensions, View } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { Dimensions, View, Animated, Easing } from 'react-native';
 import Svg, {Defs, Path, G, Circle, Rect } from "react-native-svg"
 import {height, width} from '../constants/size';
 
@@ -82,30 +82,118 @@ export function SearchIcon({ color }) {
   )
 }
 
-export function BackArrowIcon({ color }) {
+export function Arrow({ color, orientation, size }) {
   return (
-    <Svg width="17px" height="17px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-        <G id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round">
-            <G id="Mobile" transform="translate(-20.000000, -32.000000)" stroke={color} strokeWidth="2">
-                <Path d="M27.1728,33 L33,38.8272 L27.1728,44.6544 M21,38.8272 L31.3968,38.8272" id="Shape" transform="translate(27.000000, 38.827200) scale(-1, 1) translate(-27.000000, -38.827200) "></Path>
-            </G>
-        </G>
-    </Svg>
+    <View style={{transform: [{rotateZ: orientation === 'right' ? '0deg' : '180deg'}]}}>
+      <Svg width={size} height={size} viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+          <G id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round">
+              <G id="Mobile" transform="translate(-20.000000, -32.000000)" stroke={color} strokeWidth="2">
+                  <Path d="M27.1728,33 L33,38.8272 L27.1728,44.6544 M21,38.8272 L31.3968,38.8272" id="Shape" transform="translate(27.000000, 38.827200) scale(-1, 1) translate(-27.000000, -38.827200) "></Path>
+              </G>
+          </G>
+      </Svg>
+    </View>
   )
 }
 
-export function AddIcon({ color }) {
+export function AddIcon({ color, size, crossColor }) {
   return (
-    <Svg width="35px" height="35px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+    <Svg width={size} height={size} viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
       <G id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-        <G id="Mobile" transform="translate(-269.000000, -24.000000)">
+        <G id="Mobile" transform="translate(-268.000000, -23.000000)">
           <G id="Group-2" transform="translate(269.000000, 24.000000)">
-            <Circle id="Oval" fill="#282523" cx="15" cy="15" r="15"></Circle>
-            <Rect id="Rectangle" fill="#F9E8DC" x="14" y="9" width="2" height="12" rx="1"></Rect>
-            <Path d="M15,9 C15.5522847,9 16,9.44771525 16,10 L16,20 C16,20.5522847 15.5522847,21 15,21 C14.4477153,21 14,20.5522847 14,20 L14,10 C14,9.44771525 14.4477153,9 15,9 Z" id="Rectangle" fill="#F9E8DC" transform="translate(15.000000, 15.000000) rotate(90.000000) translate(-15.000000, -15.000000) "></Path>
+            <Circle id="Oval" stroke="#7E736E" fill="#181818" strokeLinecap="round" strokeLinejoin="round" cx="15" cy="15" r="15"></Circle>
+            <Rect id="Rectangle" fill={crossColor ? crossColor : "#F9E8DC"} x="14" y="9" width="2" height="12" rx="1"></Rect>
+            <Path d="M15,9 C15.5522847,9 16,9.44771525 16,10 L16,20 C16,20.5522847 15.5522847,21 15,21 C14.4477153,21 14,20.5522847 14,20 L14,10 C14,9.44771525 14.4477153,9 15,9 Z" id="Rectangle" fill={crossColor ? crossColor : "#F9E8DC"} transform="translate(15.000000, 15.000000) rotate(90.000000) translate(-15.000000, -15.000000) "></Path>
           </G>
         </G>
       </G>
     </Svg>
+  )
+}
+
+export function Chevron({ size, open }) {
+  const rotate = new Animated.Value(0);
+  const rotateAnim = useRef(rotate.interpolate({
+    inputRange: [0, 1],
+    outputRange:["0deg" , "220deg"]
+  })).current;
+  useEffect(() => {
+    if (open) {
+      Animated.timing(
+        rotate,
+        {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+          easing: Easing.ease
+        }
+      ).start()
+      // console.log(rotateAnim);
+      // console.log('open')
+  
+    } else {
+      Animated.timing(
+        rotate,
+        {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+          easing: Easing.ease
+        }
+      ).start()
+      // console.log(rotateAnim);
+      // console.log('closed')
+  
+    }
+  },[open])
+ 
+  return (
+    <Animated.View style={{transform: [{rotateZ: open ? '0deg' : '180deg'}] }}>
+      <Svg width={size} height={size} viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+        <G id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <G id="Mobile" transform="translate(-248.000000, -99.000000)">
+                <G id="Group-2" transform="translate(249.000000, 100.000000)">
+                  <Circle id="Oval" stroke="#7E736E" fill="#181818" stroke-linecap="round" stroke-linejoin="round" cx="15" cy="15" r="15"></Circle>
+                  <Path d="M19.9689863,12.2023337 C20.2387646,12.4721121 20.2387646,12.9095092 19.9689863,13.1792875 L15.0842174,18.0640563 C14.9467832,18.2014906 14.765848,18.2689111 14.5857336,18.266318 C14.405472,18.2689111 14.2245368,18.2014906 14.0871026,18.0640563 L9.20233375,13.1792875 C8.93255542,12.9095092 8.93255542,12.4721121 9.20233375,12.2023337 C9.47211208,11.9325554 9.90950918,11.9325554 10.1792875,12.2023337 L14.586,16.609 L18.9920325,12.2023337 C19.2618108,11.9325554 19.6992079,11.9325554 19.9689863,12.2023337 Z" id="Combined-Shape" fill="#F9E8DC" transform="translate(14.585660, 15.133195) rotate(180.000000) translate(-14.585660, -15.133195) "></Path>
+                </G>
+            </G>
+        </G>
+      </Svg>
+    </Animated.View>
+  )
+}
+
+export function OptionsIcon({ color }){
+  return (
+    <Svg width="48px" height="5px" viewBox="0 0 18 4" version="1.1">
+      <G id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <G id="Mobile" transform="translate(-274.000000, -66.000000)" fill="#FCE4D8">
+          <G id="Group-4" transform="translate(274.000000, 66.000000)">
+            <Circle id="Oval" cx="16" cy="2" r="2"></Circle>
+            <Circle id="Oval" cx="9" cy="2" r="2"></Circle>
+            <Circle id="Oval" cx="2" cy="2" r="2"></Circle>
+          </G>
+        </G>
+      </G>
+    </Svg>
+  )
+}
+
+export function DeleteIcon({ color }) { 
+  return(
+  <Svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1">
+    <G id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <G id="Mobile" transform="translate(-242.000000, -98.000000)">
+            <G id="Group-3" transform="translate(257.378680, 114.121320) rotate(45.000000) translate(-257.378680, -114.121320) translate(241.878680, 99.121320)">
+                <G id="Group-2" transform="translate(0.786797, -0.000000)">
+                    <Circle id="Oval" stroke="#7E736E" stroke-linecap="round" stroke-linejoin="round" cx="15" cy="15" r="15"></Circle>
+                    <Rect id="Rectangle" fill="#FF686B" x="14" y="9" width="2" height="12" rx="1"></Rect>
+                    <Path d="M15,9 C15.5522847,9 16,9.44771525 16,10 L16,20 C16,20.5522847 15.5522847,21 15,21 C14.4477153,21 14,20.5522847 14,20 L14,10 C14,9.44771525 14.4477153,9 15,9 Z" id="Rectangle" fill="#FF686B" transform="translate(15.000000, 15.000000) rotate(90.000000) translate(-15.000000, -15.000000) "></Path>
+                </G>
+            </G>
+        </G>
+    </G>
+  </Svg>
   )
 }

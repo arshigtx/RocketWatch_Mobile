@@ -10,38 +10,14 @@ import { getChartData } from '../api/cryptoDataApi';
 import { CryptoListingDataContext } from '../context/cryptoListingDataContext';
 
 
-export default function CardList({theme, config, navigation}) {
+export default function CardList({theme, config, navigation, newsData }) {
 
   const [ sortedData, setSortedData ] = useState(null);
-  const [ chartData, setChartData ] = useState([]);
-  const [ batchLoaded, setBatchLoaded ] = useState(0);
-
   const { data } = useContext(CryptoListingDataContext);
 
-
-  const getSlugBatch = async () => {
-    return sortedData.map((item) => item.slug).slice(batchLoaded*5, (batchLoaded*5)+4)
-  }
-
-  const fetchChartData = async () => {
-    const slugs = await getSlugBatch();
-    console.log(slugs);
-    getChartData(slugs, '2d')
-      .then((result) => {
-        setChartData(result)
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setBatchLoaded(batchLoaded+1))
-  }
-
   const sortDataArrs = () => {
-    setSortedData(config.type === 'price' && config.sortBy ? sortList([...data], config) : [...data])
+    setSortedData(config.sortBy ? sortList([...data], config) : [...data])
   }
-  // useEffect(() => {
-  //   if (config.type === 'price' && sortedData) {
-  //     fetchChartData()
-  //   }
-  // },[])
 
   useEffect(() => {
     sortDataArrs()
@@ -62,7 +38,7 @@ export default function CardList({theme, config, navigation}) {
   return (
     <View style={styles.cardContainer}>
       <FlatList 
-        data={sortedData}
+        data={newsData ? newsData : sortedData}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         horizontal={true}

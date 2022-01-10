@@ -11,7 +11,7 @@ export default function Explore() {
   const { theme, changeToDarkTheme, changeToLightTheme } = useContext(ThemeContext);
 
   return (
-      <ScreenContainer theme={theme} style={styles.container}>
+      <ScreenContainer style={styles.container}>
         <Text type={'big'} size={24} theme={theme.text}>Appearance</Text>
         <TouchableOpacity onPress={() => changeToLightTheme()}>
           <View style={styles.optionContainer}>

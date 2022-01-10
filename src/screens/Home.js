@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl } from 'react-native';
 
 import ScreenContainer from '../components/ScreenContainer';
 import Search from '../components/Search';
 import SearchResults from '../components/SearchResults'
 import CardSection from '../components/CardSection';
+import GetStarted from '../components/GetStarted';
+import { Text } from '../components/Text';
+import NewWatchlistModal from '../components/NewWatchlistModal';
+
 
 import { ThemeContext } from '../context/themeContext';
 import { CryptoListingDataContext } from '../context/cryptoListingDataContext';
+import { WatchlistContext } from '../context/watchlistContext';
 
 import cardListConfig from '../config/cardListConfig';
 
@@ -21,17 +26,17 @@ import {
 export default function Home({ navigation }) {
 
   const { theme } = useContext(ThemeContext);
-  const { data, updateData } = useContext(CryptoListingDataContext);
+  const { data: cryptoData, updateData } = useContext(CryptoListingDataContext);
+  const { data: WatchlistData } = useContext(WatchlistContext);
 
-
-  // const [ data, setData ] = useState([])
   const [ newsData, setNewsData ] = useState([]);
   const [ error, setError ] = useState(false);
   const [ refreshing, setRefreshing ] = useState(false);
+  const [ viewModal, setViewModal ] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    getCryptoData()
+    getcryptoData()
     .catch(err => {
       console.log(err)
       setError(true);
@@ -42,7 +47,7 @@ export default function Home({ navigation }) {
     })
   },[]);
   
-  const getCryptoData = async () => {
+  const getcryptoData = async () => {
     const trendingCryptos = await getTrendingCryptos(10);
     const cryptoSlugs = await trendingCryptos.map((data) => data.slug);
     const cryptoMetadata = await getCryptoMetadata(cryptoSlugs);
@@ -64,8 +69,8 @@ export default function Home({ navigation }) {
   }
 
   useEffect(() => {
-    if (data.length === 0) {
-      getCryptoData()
+    if (cryptoData.length === 0) {
+      getcryptoData()
       .catch((err) => {
         console.log(err);
         setError(true);
@@ -75,17 +80,14 @@ export default function Home({ navigation }) {
 
   useEffect(() => {
     console.log('data has changed');
-  },[data])
+  },[cryptoData])
 
   return (
-    <ScreenContainer 
-      theme={theme}>
+    <ScreenContainer>
       <Search 
-        theme={theme}
         navigation={navigation} 
       >
-       <SearchResults 
-       />
+       <SearchResults />
       </Search>
       <ScrollView 
         scrollEventThrottle={50}
@@ -99,12 +101,17 @@ export default function Home({ navigation }) {
           />
         }
       >
+        {WatchlistData.length === 0 ? 
+          <GetStarted 
+            setViewModal={setViewModal}
+          /> 
+        : null }     
         {!error ? cardListConfig.map((item, i) => (
           <CardSection
             key={`${item.type}-${i}`} 
             config={item}
-            theme={theme} 
-            // data={item.type === 'price' ? data : newsData}
+            theme={theme}
+            newsData={item.type === 'news' ? newsData : null} 
             navigation={navigation}
           />
         ))
@@ -112,6 +119,10 @@ export default function Home({ navigation }) {
           <Text>Please check your connection and try again.</Text>
       }
       </ScrollView>
+      <NewWatchlistModal 
+        viewModal={viewModal}
+        setViewModal={setViewModal}
+      />
     </ScreenContainer>
   )
 }
@@ -119,10 +130,6 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  image: {
-    width: '100%',
-    resizeMode: 'contain',
   }
 })
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react'
+import React, {useEffect, useState, useContext } from 'react'
 import { Text as DefaultText, StyleSheet } from 'react-native'
 import * as Font from 'expo-font';
 

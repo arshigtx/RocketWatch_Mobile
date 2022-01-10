@@ -23,6 +23,12 @@ const light = {
   text: {
     color: '#231206'
   },
+  watchlist: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#EEEEEE',
+    shadowColor: "#E5E5E5",
+    shadowOpacity: 0.3
+  },
   priceCard: {
     backgroundColor: '#FFFFFF',
     borderColor: '#EEEEEE',
@@ -34,6 +40,17 @@ const light = {
     borderColor: 'transparent',
     shadowColor: "#E5E5E5",
     shadowOpacity: 0.3
+  },
+  modal: {
+    backgroundColor: '#181818',
+    borderColor: '#413B38',
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    textInput: {
+      backgroundColor: '#262626',
+      color: '#FCE4D8'
+    },
+    placeholder: '#9F847C'
   },
   cancelText: {
     color: '#FF686B'
@@ -56,8 +73,25 @@ const light = {
   },
   backIcon: {
     color: '#231206'
-  }
-
+  },
+  CTA: {
+    button: {
+      active: {
+        backgroundColor: '#201815',
+      },
+      inactive: {
+        backgroundColor: '#221D1C'
+      }
+    },
+    text: {
+      active: {
+        color: '#FF8A65'
+      },
+      inactive: {
+        color: '#9F847C'
+      }
+    }
+  },
 };
 
 const dark = {
@@ -76,7 +110,7 @@ const dark = {
     backgroundColor: '#141414',
     borderTopColor: '#413B38',
     activeIcon: {
-      color: '#F3C29F'
+      color: '#FF8A65'
     },
     inactiveIcon: {
       color: '#F9E8DC'
@@ -84,6 +118,12 @@ const dark = {
   },
   text: {
     color: '#FCE4D8'
+  },
+  watchlist: {
+    backgroundColor: '#181818',
+    borderColor: '#413B38',
+    shadowColor: "#000",
+    shadowOpacity: 0.1
   },
   priceCard: {
     backgroundColor: '#181818',
@@ -96,6 +136,17 @@ const dark = {
     borderColor: 'transparent',
     shadowColor: "#000",
     shadowOpacity: 0.1
+  },
+  modal: {
+    backgroundColor: '#181818',
+    borderColor: '#413B38',
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    textInput: {
+      backgroundColor: '#262626',
+      color: '#FCE4D8'
+    },
+    placeholder: '#9F847C'
   },
   cancelText: {
     color: '#FF686B'
@@ -118,7 +169,25 @@ const dark = {
   },
   backIcon: {
     color: '#F9E8DC'
-  }
+  },
+  CTA: {
+    button: {
+      active: {
+        backgroundColor: '#201815',
+      },
+      inactive: {
+        backgroundColor: '#221D1C'
+      }
+    },
+    text: {
+      active: {
+        color: '#FF8A65'
+      },
+      inactive: {
+        color: '#9F847C'
+      }
+    }
+  },
 };
 
 export {

@@ -38,7 +38,7 @@ export default function Search({ navigation, children }) {
     }
   }
 
-  const cancelAnim = useRef(new Animated.Value(-100)).current;
+  const cancelAnim = useRef(new Animated.Value(-150)).current;
   const shrinkAnim = useRef(new Animated.Value(0)).current;
   const widthInter = useRef(shrinkAnim.interpolate({
     inputRange: [0, 1],
@@ -58,7 +58,7 @@ export default function Search({ navigation, children }) {
       Animated.timing(
         cancelAnim,
         {
-          toValue: 0,
+          toValue: 10,
           duration: 150,
           useNativeDriver: false
         }
@@ -79,7 +79,7 @@ export default function Search({ navigation, children }) {
       Animated.timing(
         cancelAnim,
         {
-          toValue: -100,
+          toValue: -150,
           duration: 150,
           useNativeDriver: false
         }
@@ -110,11 +110,7 @@ export default function Search({ navigation, children }) {
           hitSlop={{top: 20, bottom: 20, left: 50, right: 50}}
         >
           <Animated.View style={[styles.cancel, {transform: [{translateX: cancelAnim}]}]}>
-            <Text 
-              type={'regular'} 
-              size={12}
-              style={[theme.cancelText, {marginLeft: 15}]}
-            >CANCEL</Text>
+            <Text type={'big'} size={14} theme={theme.CTA.text.active}>Cancel</Text>
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>

@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ThemeContext } from '../context/themeContext';
 import Home from '../screens/Home';
 import Explore from '../screens/Explore';
-import Watchlist from '../screens/Watchlist';
+import Watchlists from '../screens/Watchlists';
 import Profile from '../screens/Profile';
 import Search from '../components/Search';
 import CoinDetails from '../screens/CoinDetails';
@@ -72,7 +72,7 @@ function TabMenuNav() {
       />
       <TabMenu.Screen
         name="Watchlists"
-        component={Explore}
+        component={Watchlists}
         initialParams={{ theme }}
         options={{
           tabBarIcon: ({ color, size }) => (

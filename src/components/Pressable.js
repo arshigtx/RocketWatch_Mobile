@@ -53,6 +53,8 @@ export default function Pressable(props) {
       onPressIn={() => animatedPressIn()}
       onPressOut={() => animatedPressOut()}
       onPress={props.onPress}
+      style={props.style}
+      disabled={props.disabled}
     >
       <Animated.View
         style={{transform: [{ scale: scaleAnim }], opacity: opacityAnim}}

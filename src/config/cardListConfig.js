@@ -1,13 +1,5 @@
 const cardListConfig = [
   {
-    title: "Watchlist",
-    type: 'price'
-  }, 
-  // {
-  //   title: 'News',
-  //   type: 'news'
-  // },
-  {
     title: "Top Winners",
     type: 'price', 
     sortBy: 'percent_change_24h',
@@ -18,6 +10,11 @@ const cardListConfig = [
     type: 'price',
     sortBy: 'percent_change_24h',
     dir: 'desc'
-  }];
+  },
+  {
+    title: 'News',
+    type: 'news'
+  },
+];
 
 export default cardListConfig;

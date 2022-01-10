@@ -4,12 +4,13 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from './Text';
 import CardList from './CardList';
 
-export default function CardSection({ theme, config, navigation }) {
+export default function CardSection({ theme, config, navigation, newsData }) {
 
   return (
     <View style={styles.sectionContainer}>
       <Text style={{paddingLeft: 20}} type={'big'} size={24} theme={theme.text}>{config.title}</Text>
-      <CardList 
+      <CardList
+        newsData={newsData ? newsData : null} 
         theme={theme}
         config={config}
         navigation={navigation}
