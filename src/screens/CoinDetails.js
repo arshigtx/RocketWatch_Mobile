@@ -1,13 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {View, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 
-import ScreenContainer from '../components/ScreenContainer';
-import { Text } from '../components/Text';
-import Pressable from '../components/Pressable';
-import { Arrow, AddIcon } from '../components/Icons';
-import Chart2 from '../components/Chart2';
-
-import { ThemeContext } from '../context/themeContext';
+import ScreenContainer from '../components/core/ScreenContainer';
+import Text from '../components/core/Text';
+import Pressable from '../components/core/Pressable';
+import { Arrow, AddIcon } from '../components/core/Icons';
+import Chart2 from '../components/CoinDetails/Chart2';
 
 import { formatPrice, formatPercent } from '../utils/formatNumber';
 
@@ -16,7 +15,7 @@ import { getChartData } from '../api/cryptoDataApi';
 
 export default function CoinDetails({ route, navigation }) {
   
-  const { theme } = useContext(ThemeContext);
+  const { theme, currency } = useSelector(state => state.userPreference);
   const { name, slug, percent_change_24h, price, chartData, direction } = route.params.data
 
   const [ currentPrice, setCurrentPrice ] = useState(null);
@@ -24,8 +23,7 @@ export default function CoinDetails({ route, navigation }) {
 
   useEffect(() => {
     if(!chartData) {
-      console.log(slug)
-      getChartData([slug], '2d')
+      getChartData({slugs: [slug], range: '2d', currency})
         .then(result => setChart(result[0].chartData))
         .catch(err => console.log(err))
     }
@@ -48,7 +46,7 @@ export default function CoinDetails({ route, navigation }) {
       <View style={styles.priceContainer}>
         <Text type={"big"} size={22} theme={theme.text}>{name}</Text>
         <Text type={"big"} size={16} theme={direction === 'up' ? theme.percent.up : theme.percent.down} style={{marginTop: 10}}>{formatPercent(percent_change_24h)}</Text>
-        <Text type={"big"} size={16} theme={theme.text} style={{marginTop: 2}}>{formatPrice(currentPrice ? currentPrice : price)}</Text>
+        <Text type={"big"} size={16} theme={theme.text} style={{marginTop: 2}}>{formatPrice(currentPrice ? currentPrice : price, currency)}</Text>
       </View>
       {chartData || chart ? 
         <Chart2 
@@ -67,7 +65,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 60,
     paddingLeft: 20,
     paddingRight: 20,
   },

@@ -1,19 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, UIManager, LayoutAnimation, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, ScrollView, UIManager, LayoutAnimation, Platform, TouchableWithoutFeedback } from 'react-native';
+import { useSelector } from 'react-redux';
 
-import ScreenContainer from '../components/ScreenContainer'
-import { Text } from '../components/Text';
-import Button from '../components/Button';
-import WatchlistSection from '../components/WatchlistSection';
-import Pressable from '../components/Pressable';
-import NewWatchlistModal from '../components/NewWatchlistModal';
-
-import { ThemeContext } from '../context/themeContext';
-import { WatchlistContext } from '../context/watchlistContext';
+import ScreenContainer from '../components/core/ScreenContainer'
+import Text from '../components/core/Text';
+import Button from '../components/core/Button';
+import WatchlistSection from '../components/Watchlists/WatchlistSection';
+import Pressable from '../components/core/Pressable';
+import NewWatchlistModal from '../components/shared/NewWatchlistModal';
 
 import { layoutAnim } from '../utils/layoutAnim';
 
-import { getWatchlists, createWatchlist, clear, asyncGetAllKeys } from '../storage/watchlists';
+import { height, width } from '../constants/size';
+
+import { getWatchlists, createWatchlist, clear, asyncGetAllKeys, manual } from '../storage/watchlists';
+import { initStorage } from '../storage/utils'
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -23,34 +24,36 @@ if (Platform.OS === 'android') {
 
 export default function Watchlists({ navigation }) {
 
-  const { theme } = useContext(ThemeContext);
-  const { data, updateWatchlists } = useContext(WatchlistContext);
+  const { currency, theme } = useSelector(state => state.userPreference);
+  const { watchlists } = useSelector(state => state.watchlists);
   const [ viewDelete, setViewDelete ] = useState(false);
-  const [ viewModal, setViewModal ] = useState(false);
+  const [ newWatchlistModalVisible, setNewWatchlistModalVisible ] = useState(false);
 
   useEffect(() => {
     // createWatchlist('coollist')
     // .then((result) => updateWatchlists(result))
     // getWatchlists().then(result => console.log(result))
+    // console.log(data);
     // getWatchlists()
     //   .then(result => updateWatchlists(result))
     //   .catch(err => console.log(err))
     // clear();
     // asyncGetAllKeys();
+    // manual();
   },[])
 
   useEffect(() => {
-    if (data.length === 0 && viewDelete) {
+    if (watchlists.length === 0 && viewDelete) {
       setViewDelete(false)
     }
-  },[data])
+  },[watchlists])
 
   return (
     <ScreenContainer>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text type={'big'} size={24} theme={theme.text}>Watchlists</Text>
-          {data.length >= 1 ?
+          {watchlists.length >= 1 ?
             viewDelete ?
               <Pressable onPress={() => {
                 layoutAnim.Opacity();   
@@ -74,13 +77,14 @@ export default function Watchlists({ navigation }) {
           <>
           <WatchlistSection 
             viewDelete={viewDelete}
+            navigation={navigation}
           />
           {!viewDelete &&
             <Button 
               text={"New Watchlist"}
               onPress={() => {
                 layoutAnim.Opacity();
-                setViewModal(true);
+                setNewWatchlistModalVisible(true);
               }} 
               style={{marginTop: 40}}
               active
@@ -89,8 +93,8 @@ export default function Watchlists({ navigation }) {
           </>
         </ScrollView>
         <NewWatchlistModal 
-          viewModal={viewModal}
-          setViewModal={setViewModal}
+          modalVisible={newWatchlistModalVisible}
+          setModalVisible={setNewWatchlistModalVisible}
         />
       </View>
     </ScreenContainer>
@@ -100,9 +104,18 @@ export default function Watchlists({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 60,
     paddingLeft: 20,
     paddingRight: 20,
+  },
+  overlayContainer: {
+    zIndex: 2,
+    position: 'absolute',
+    height: height*2,
+    top: -200, 
+    left: 0,
+    right: 0, 
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.75)' 
   },
   titleContainer: {
     flexDirection: 'row',

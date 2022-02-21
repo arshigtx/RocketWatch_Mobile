@@ -1,17 +1,18 @@
 const cardListConfig = [
   {
-    title: "Top Winners",
+    id: 1,
     type: 'price', 
-    sortBy: 'percent_change_24h',
-    dir: 'asc'
+    title: "Top Winners",
+    tag: 'winners',
   }, 
   {
-    title: "Top Losers",
+    id: 2,
     type: 'price',
-    sortBy: 'percent_change_24h',
-    dir: 'desc'
+    title: "Top Losers",
+    tag: 'losers'
   },
   {
+    id: 3,
     title: 'News',
     type: 'news'
   },

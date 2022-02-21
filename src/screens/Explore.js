@@ -1,8 +1,10 @@
-import React, {useContext} from 'react';
+import React from 'react';
 
-import ScreenContainer from '../components/ScreenContainer'
-import Search from '../components/Search';
-import ListSection from '../components/ListSection';
+import ScreenContainer from '../components/core/ScreenContainer'
+import Search from '../components/shared/Search';
+import ListSection from '../components/shared/ListSection';
+
+import { searchCrypto } from '../api/cryptoDataApi';
 
 export default function Explore({ navigation }) {
 
@@ -10,6 +12,7 @@ export default function Explore({ navigation }) {
     <ScreenContainer>
       <Search 
         navigation={navigation}
+        searchFunction={searchCrypto}
       >
         <ListSection
           title={'Explore'}

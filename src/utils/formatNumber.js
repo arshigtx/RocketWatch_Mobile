@@ -1,11 +1,14 @@
+import currencies from '../data/currencies';
+
 const percentStringToNum = (string) => {
   return parseFloat(string.slice(0,-1))
 }
 
-const formatPrice = (number) => {
+const formatPrice = (number, currency) => {
   const numZeros = parseInt(Math.log10(number));
+  const currencySign = currencies.filter(item => item.symbol === currency).map(item => item.sign);
   if (numZeros < 2 ) {
-    return `$${number.toFixed(-numZeros + 4)}`;
+    return `${currencySign}${number.toFixed(-numZeros + 4)}`;
   } else {
     if (numZeros > 3) {
       const numCommas = parseInt(parseInt(Math.log10(number))/3)
@@ -14,9 +17,9 @@ const formatPrice = (number) => {
       for (i=1;i<=numCommas;i++) {
         newNum = newNum.slice(0,(-i*3)-i+1) + ',' + newNum.slice((-i*3)-i+1)
       }
-      return `$${newNum}${decimalNum}`    
+      return `${currencySign}${newNum}${decimalNum}`    
     } else {
-      return `$${number.toFixed(2)}`;
+      return `${currencySign}${number.toFixed(2)}`;
     }
   }
 }

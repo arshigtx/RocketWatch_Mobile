@@ -1,72 +1,83 @@
 import fetchAPI from './base';
+import currencies from '../data/currencies';
 
-const DEV_URL = 'http://192.168.0.15:3000/graphql'
+const DEV_URL = 'http://192.168.0.15:3000/graphql';
 
-export async function getTrendingCryptos(limit){
+export async function getWinnersAndLosers({limit, sortDir, currency}) {
   return await fetchAPI(DEV_URL, 'POST', 
   {
     query:
     `{
-      listing(limit: ${limit}){
+      getTopWinnersAndLosersList(limit: ${limit}, sortDir: "${sortDir}", currency: "${currency}"){
         id,
         name,
-        symbol,
-        slug,
-        price,
-        percent_change_24h,
-        volume_24h,
-        direction
-      }
-    }`
-  })
-  .then(result => result.data.listing)
-  .catch(err => console.log(err));
-}
-
-export async function getOffsetCryptoData(limit, offset){
-  return await fetchAPI(DEV_URL, 'POST', 
-  {
-    query:
-    `{
-      offsetListing(limit: ${limit}, offset: ${offset}){
-        name,
         slug,
         symbol,
-        price,
-        percent_change_24h,
-        volume_24h,
+        url,
+        description,
         logo,
+        price,
+        percent_change_24h,
+        volume_24h,
         direction
       }
     }`
   })
-  .then(result => result.data.offsetListing)
+  .then(result => result.data.getTopWinnersAndLosersList)
   .catch(err => console.log(err));
 }
 
-export async function getCryptoMetadata(slugs){
+export async function getCryptoData({slugs, currency}) {
   return await fetchAPI(DEV_URL, 'POST', 
   {
     query: 
     `{
-      metaData(slugs: ${JSON.stringify(slugs)}) {
+      getCryptoData(slugs: ${JSON.stringify(slugs)}, currency: "${currency}") {
+        id,
+        name,
         slug,
+        symbol,
+        url,
         description,
         logo,
-        url
-      }
-    }`
+        price,
+        percent_change_24h,
+        volume_24h,
+        direction
+      } 
+   }`
   })
-  .then(result => result.data.metaData)
+  .then(result => result.data.getCryptoData)
   .catch(err => console.log(err))
 }
 
-export async function getChartData(slugs, range) {
+export async function getOffsetCryptoData({limit, offset, currency}){
+  return await fetchAPI(DEV_URL, 'POST', 
+  {
+    query:
+    `{
+      allCryptoListOffset(limit: ${limit}, offset: ${offset}, currency: "${currency}"){
+        name,
+        slug,
+        symbol,
+        price,
+        percent_change_24h,
+        volume_24h,
+        logo,
+        direction
+      }
+    }`
+  })
+  .then(result => result.data.allCryptoListOffset)
+  .catch(err => console.log(err));
+}
+
+export async function getChartData({slugs, range, currency}) {
   return await fetchAPI(DEV_URL, 'POST', 
   {
     query: 
     `{
-      chartData(slugs: ${JSON.stringify(slugs)}, range: "${range}") {
+      chartData(slugs: ${JSON.stringify(slugs)}, range: "${range}", currency: "${currency}") {
         slug,
         chartData {
           price,
@@ -79,12 +90,12 @@ export async function getChartData(slugs, range) {
   .catch(err => console.log(err))
 }
 
-export async function searchCrypto(query) {
+export async function searchCrypto({query, currency}) {
   return await fetchAPI(DEV_URL, 'POST', 
   {
     query: 
     `{
-      search(query: "${query}") {
+      search(query: "${query}", currency: "${currency}") {
         name,
         slug,
         symbol,
@@ -106,6 +117,7 @@ export async function getCryptoNews() {
     query: 
     `{
       news {
+        id,
         title,
         pubDate,
         link,
@@ -116,5 +128,12 @@ export async function getCryptoNews() {
   .then(result => result.data.news)
   .catch(err => console.log(err))
 }
+
+export function findCurrency({query}) {
+  return currencies.filter(currency => (
+    currency.symbol.startsWith(query.toUpperCase()) || currency.name.startsWith(query)
+  ));
+}
+
 
 

@@ -1,26 +1,48 @@
-import React, { useContext } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux'
 
-import Watchlist from '../components/Watchlist';
+import ScreenContainer from '../components/core/ScreenContainer'
+import Search from '../components/shared/Search';
+import ListSection from '../components/shared/ListSection';
+import { CloseIcon } from '../components/core/Icons';
+import Pressable from '../components/core/Pressable';
 
-import { ThemeContext } from '../context/themeContext';
-import { WatchlistContext } from '../context/watchlistContext';
+import { searchCrypto } from '../api/cryptoDataApi';
+ 
+export default function Explore({ navigation, route }) {
 
-import { getWatchlists, createWatchlist, clear, asyncGetAllKeys } from '../storage/watchlists';
+  const { theme } = useSelector(state => state.userPreference);
 
-export default function WatchlistSection() {
-
-  const { theme } = useContext(ThemeContext);
-  const { data } = useContext(WatchlistContext);
-
-  // console.log(data);
+  const { id:watchlistID } = route.params 
 
   return (
-    data.map(({id, name, data}) => (
-      <Watchlist 
-        key={id}
-        name={name}
-      />
-    ))
+    <ScreenContainer modal >
+      <Pressable onPress={() => navigation.goBack()}>
+        <View style={styles.closeIcon}>
+          <CloseIcon 
+            color={theme.backIcon.color}
+            size={15}
+          />
+        </View>
+      </Pressable>
+      <Search 
+        navigation={navigation}
+        searchFunction={searchCrypto}
+      >
+        <ListSection
+          title={'Add Crypto'}
+          watchlistID={watchlistID}
+        />
+      </Search>
+    </ScreenContainer>
   )
 }
+
+const styles = StyleSheet.create({
+  closeIcon: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    margin: 30
+  }
+})

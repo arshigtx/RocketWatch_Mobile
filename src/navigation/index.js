@@ -1,16 +1,20 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer} from '@react-navigation/native';
-// import { createStackNavigator, CardStyleInterpolator } from '@react-navigation/stack';
+import { createStackNavigator, CardStyleInterpolator, TransitionPresets } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ThemeContext } from '../context/themeContext';
+import { useSelector } from 'react-redux'
+
 import Home from '../screens/Home';
 import Explore from '../screens/Explore';
 import Watchlists from '../screens/Watchlists';
-import Profile from '../screens/Profile';
-import Search from '../components/Search';
+import Settings from '../screens/Settings';
+import Search from '../components/shared/Search';
 import CoinDetails from '../screens/CoinDetails';
-import { HomeIcon, ExploreIcon, WatchlistIcon, ProfileIcon } from '../components/Icons'
+import AddCrypto from '../screens/AddCrypto';
+import Currency from '../screens/Currency';
+
+import { HomeIcon, ExploreIcon, WatchlistIcon, ProfileIcon } from '../components/core/Icons'
 
 export default function Navigation() {
   return (
@@ -24,8 +28,15 @@ const Stack = createNativeStackNavigator();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      initialRouteName="Root"
+      screenOptions={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    >
       <Stack.Screen name="Root" component={TabMenuNav} options={{ headerShown: false }} />
+      <Stack.Screen name="AddCryptoNav" component={AddCryptoNav} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 }
@@ -34,7 +45,7 @@ const TabMenu = createBottomTabNavigator();
 
 function TabMenuNav() {
 
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useSelector(state => state.userPreference);
 
   return (
     <TabMenu.Navigator
@@ -72,7 +83,7 @@ function TabMenuNav() {
       />
       <TabMenu.Screen
         name="Watchlists"
-        component={Watchlists}
+        component={WatchlistsNav}
         initialParams={{ theme }}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -81,7 +92,7 @@ function TabMenuNav() {
         }}        
       />
       <TabMenu.Screen
-        name="Profile"
+        name="Settings"
         initialParams={{ theme }}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -89,7 +100,7 @@ function TabMenuNav() {
           ),
         }} 
       >
-        {props => <Profile {...props}/> }
+        {props => <SettingsNav {...props}/> }
       </TabMenu.Screen>
     </TabMenu.Navigator>
   );
@@ -103,7 +114,6 @@ function HomeNav() {
       initialRouteName="HomeNav"
       screenOptions={{
         headerShown: false,
-        // presentation: 'modal'
       }}
     >
       <HomeStack.Screen
@@ -126,6 +136,15 @@ function HomeNav() {
         name="SearchNav"
         component={SearchNav}
       />
+      {/* <HomeStack.Screen
+        name="AddCryptoNav"
+        component={AddCryptoNav}
+        screenOptions={{
+          headerShown: false,
+          presentation: 'modal'
+        }}
+        options={{...TransitionPresets.ModalSlideFromBottomIOS}} 
+      /> */}
       <HomeStack.Screen
         name="CoinDetails"
         options={{
@@ -194,3 +213,70 @@ function SearchNav() {
     </SearchStack.Navigator>
   )
 }
+
+const AddCryptoStack = createNativeStackNavigator();
+
+function AddCryptoNav() {
+  return (
+    <AddCryptoStack.Navigator
+      initialRouteName="AddCrypto"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AddCryptoStack.Screen
+        name="AddCrypto"
+        component={AddCrypto} 
+      />
+      <AddCryptoStack.Screen
+        name="CoinDetails"
+        component={CoinDetails}
+      />
+    </AddCryptoStack.Navigator>
+  )
+}
+
+const SettingsStack = createNativeStackNavigator();
+
+function SettingsNav() {
+  return (
+    <SettingsStack.Navigator
+      initialRouteName="SettingsNav"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <SettingsStack.Screen
+        name="SettingsScreen"
+        component={Settings} 
+      />
+      <SettingsStack.Screen
+        name="Currency"
+        component={Currency}
+      />
+    </SettingsStack.Navigator>
+  )
+}
+
+const WatchlistsStack = createNativeStackNavigator();
+
+function WatchlistsNav() {
+  return (
+    <WatchlistsStack.Navigator
+      initialRouteName="WatchlistsNav"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <WatchlistsStack.Screen
+        name="WatchlistsScreen"
+        component={Watchlists} 
+      />
+      <WatchlistsStack.Screen
+        name="CoinDetails"
+        component={CoinDetails}
+      />
+    </WatchlistsStack.Navigator>
+  )
+}
+
